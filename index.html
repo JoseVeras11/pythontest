@@ -1,56 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Leer Google Sheet público con Python</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
-  <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+<title>Leer Google Sheet público con Python</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 20px;
-    }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background: #f5f5f5;
-    }
-    #estado {
-      margin-top: 16px;
-      font-weight: bold;
-    }
-  </style>
+<link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+<script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+
+<style>
+body{
+font-family:Arial;
+max-width:1000px;
+margin:40px auto;
+padding:20px;
+}
+
+table{
+border-collapse:collapse;
+width:100%;
+margin-top:20px;
+}
+
+th,td{
+border:1px solid #ccc;
+padding:8px;
+}
+
+th{
+background:#f5f5f5;
+}
+
+#estado{
+margin-top:16px;
+font-weight:bold;
+}
+</style>
+
 </head>
+
 <body>
-  <h1>Google Sheet público leído con Python</h1>
-  <p>Esta tabla se carga desde Google Sheets usando Python en el navegador.</p>
 
-  <div id="estado">Cargando datos...</div>
-  <div id="tabla"></div>
+<h1>Google Sheet público leído con Python</h1>
 
-  <py-script>
+<p>Esta tabla se carga desde Google Sheets usando Python en el navegador.</p>
+
+<div id="estado">Cargando datos...</div>
+<div id="tabla"></div>
+
+<py-script>
+
 from pyscript import display, fetch
 import csv
 import io
+import asyncio
 
-# URL CSV de exportación del Google Sheet
 url = "https://docs.google.com/spreadsheets/d/1H1m1HAU45aJ6zuqNF7XIGVGcLBJBjS2B/export?format=csv&gid=0"
 
 async def cargar_tabla():
+
     try:
+
         response = await fetch(url)
         texto = await response.text()
 
@@ -63,20 +74,30 @@ async def cargar_tabla():
             display("Datos cargados correctamente.", target="estado")
 
         html = "<table>"
-        for i, row in enumerate(rows):
+
+        for i,row in enumerate(rows):
+
             html += "<tr>"
+
             tag = "th" if i == 0 else "td"
+
             for cell in row:
                 html += f"<{tag}>{cell}</{tag}>"
+
             html += "</tr>"
+
         html += "</table>"
 
         display(html, target="tabla")
 
     except Exception as e:
+
         display(f"Error al leer la hoja: {e}", target="estado")
 
-await cargar_tabla()
-  </py-script>
+
+asyncio.run(cargar_tabla())
+
+</py-script>
+
 </body>
 </html>
