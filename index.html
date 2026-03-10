@@ -2,9 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Leer Google Sheet público con Python</title>
+<title>Prueba Python en el navegador</title>
 
 <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
 <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
@@ -12,7 +11,7 @@
 <style>
 body{
 font-family:Arial;
-max-width:1000px;
+max-width:900px;
 margin:40px auto;
 padding:20px;
 }
@@ -31,71 +30,45 @@ padding:8px;
 th{
 background:#f5f5f5;
 }
-
-#estado{
-margin-top:16px;
-font-weight:bold;
-}
 </style>
 
 </head>
 
 <body>
 
-<h1>Google Sheet público leído con Python</h1>
+<h1>Prueba simple de Python en el navegador</h1>
 
-<p>Esta tabla se carga desde Google Sheets usando Python en el navegador.</p>
-
-<div id="estado">Cargando datos...</div>
 <div id="tabla"></div>
 
 <py-script>
 
-from pyscript import display, fetch
-import csv
-import io
-import asyncio
+from pyscript import display
 
-url = "https://docs.google.com/spreadsheets/d/1H1m1HAU45aJ6zuqNF7XIGVGcLBJBjS2B/export?format=csv&gid=0"
+# dataset de prueba
+datos = [
+["Campaña","Impresiones","Clicks","CTR"],
+["Aire Acondicionado",12000,450,"3.75%"],
+["Televisores",18000,520,"2.88%"],
+["Refrigeradoras",9500,390,"4.10%"],
+["Laptops",15000,610,"4.06%"]
+]
 
-async def cargar_tabla():
+html = "<table>"
 
-    try:
+for i,row in enumerate(datos):
 
-        response = await fetch(url)
-        texto = await response.text()
+    html += "<tr>"
 
-        reader = csv.reader(io.StringIO(texto))
-        rows = list(reader)
+    tag = "th" if i == 0 else "td"
 
-        if not rows:
-            display("La hoja está vacía.", target="estado")
-        else:
-            display("Datos cargados correctamente.", target="estado")
+    for cell in row:
+        html += f"<{tag}>{cell}</{tag}>"
 
-        html = "<table>"
+    html += "</tr>"
 
-        for i,row in enumerate(rows):
+html += "</table>"
 
-            html += "<tr>"
-
-            tag = "th" if i == 0 else "td"
-
-            for cell in row:
-                html += f"<{tag}>{cell}</{tag}>"
-
-            html += "</tr>"
-
-        html += "</table>"
-
-        display(html, target="tabla")
-
-    except Exception as e:
-
-        display(f"Error al leer la hoja: {e}", target="estado")
-
-
-asyncio.run(cargar_tabla())
+display(html, target="tabla")
 
 </py-script>
 
